@@ -12,3 +12,4 @@ PLATFORMS
 
 DEPENDENCIES
   anemone
+  nokogiri

@@ -5,6 +5,7 @@ gem "anemone"
 gem "nokogiri"
 gem "sinatra"
 gem 'rest-client'
-gem 'data_mapper', "1.2.0.rc2"
-gem 'dm-sqlite-adapter', "1.2.0.rc2"
+gem 'data_mapper' , "1.1.0"
+gem 'dm-sqlite-adapter' , "1.1.0"
 gem 'haml'
+gem 'json', "~> 1.4.6"

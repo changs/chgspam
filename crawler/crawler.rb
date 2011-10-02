@@ -10,8 +10,10 @@ require 'json'
 require 'set'
 
 def meta_refresh?(page)
-    redirect_url = page.doc.at('meta[http-equiv="Refresh"]')
+  if redirect_url = page.doc.at('meta[http-equiv="Refresh"]')
+  else redirect_url = page.doc.at('meta[http-equiv="refresh"]')
     url = redirect_url['content'][/url=(.+)/, 1] unless redirect_url.nil?
+  end
 end
 
 email_regex = /[\w+\-.]+@[a-z\d\-.]+\.[a-z]+/i
@@ -41,7 +43,7 @@ Anemone.crawl(domain) do |anemone|
 
     next unless page.html?
     next unless links << meta_refresh?(page)
-    
+
     page.doc.search("//a[@href]").each do |a|
       u = a['href']
       next if u.nil? or u.empty?
@@ -62,11 +64,11 @@ puts "Emails found in #{domain}"
 p arr_mails.to_a
 
 begin
-RestClient.post server_url + '/email', 
-  { 'emails' => arr_mails.to_a, 'domain' => domain }.to_json, :content_type => :json, :accept => :json
+  RestClient.post server_url + '/email', 
+    { 'emails' => arr_mails.to_a, 'domain' => domain }.to_json, :content_type => :json, :accept => :json
 
-RestClient.post server_url + '/link', 
-  { 'url' => links.to_a }.to_json, content_type: :json, accept: :json
+  RestClient.post server_url + '/link', 
+    { 'url' => links.to_a }.to_json, content_type: :json, accept: :json
 
 end
 

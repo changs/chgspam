@@ -12,7 +12,7 @@ require 'set'
 email_regex = /[\w+\-.]+@[a-z\d\-.]+\.[a-z]+/i
 email_regex2 = /([\w+\-.]+) \[ at \] ([a-z\d\-.]+\.[a-z]+)/i
 
-server_url = 'http://127.0.0.1:4567'
+server_url = 'http://127.0.0.1:9393'
 response = RestClient.get server_url + '/start'
 params = JSON.parse(response)
 domain = params["domain"]['url']

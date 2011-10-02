@@ -1,8 +1,8 @@
 require 'sinatra'
+require "rubygems"
+require "bundler/setup"
 require 'data_mapper'
 require 'haml'
-
-DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/database.db")
 
 class Email
   include DataMapper::Resource
@@ -18,14 +18,13 @@ class Domain
   property :visited_at, DateTime
 end
 
-DataMapper.finalize
-Email.auto_migrate! unless Email.storage_exists?
-Domain.auto_migrate! unless Domain.storage_exists?
-
 configure do
-  Domain.destroy
-  Email.destroy
-  Domain.create(url: "http://127.0.0.1:4567", visited: false, visited_at: Time.now-6000)
+  DataMapper::setup(:default, "sqlite3://#{File.expand_path(File.dirname(__FILE__))}/database.db")
+  DataMapper.finalize
+  Email.auto_migrate! unless Email.storage_exists?
+  Domain.auto_migrate! unless Domain.storage_exists?
+  # First domain to crawl
+  Domain.create(url: "http://127.0.0.1:9393", visited: false, visited_at: Time.now-6000)
 end
 
 get '/' do
@@ -35,7 +34,7 @@ end
 get '/start' do
   failed = Domain.all(visited: false, :visited_at.lt => (Time.now-600)) # Wait for 10 minutes for crawlers to return
   failed.each { |x| x.update(visited_at: nil) }
-    content_type :json
+  content_type :json
   if domain = Domain.first(visited_at: nil)
   else  # If nothing lefts return the oldest domain to crawl
     domain = Domain.first(visited_at: Domain.min(:visited_at))
@@ -76,9 +75,9 @@ __END__
 
 @@ layout
 %html
-  %body= yield
+%body= yield
 
 @@ items
-%h2== #{@items.count} gathered addresses.
-- @items.each do |i|
+%h2== #{@items.count} gathered.
+  - @items.each do |i|
   %p= i['url']

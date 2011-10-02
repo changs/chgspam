@@ -6,5 +6,5 @@ db/*.sqlite3
 .*.sw[a-z]
 *.un~
 Session.vim
-
+*.db
 vendor/ruby

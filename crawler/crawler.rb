@@ -12,8 +12,8 @@ require 'set'
 def meta_refresh?(page)
   if redirect_url = page.doc.at('meta[http-equiv="Refresh"]')
   else redirect_url = page.doc.at('meta[http-equiv="refresh"]')
-    url = redirect_url['content'][/url=(.+)/, 1] unless redirect_url.nil?
   end
+  url = redirect_url['content'][/url=(.+)/, 1] unless redirect_url.nil?
 end
 
 email_regex = /[\w+\-.]+@[a-z\d\-.]+\.[a-z]+/i
@@ -42,7 +42,10 @@ Anemone.crawl(domain) do |anemone|
     puts page.url
 
     next unless page.html?
-    next unless links << meta_refresh?(page)
+    if meta_refresh?(page)
+      links << meta_refresh?(page)
+      next
+    end
 
     page.doc.search("//a[@href]").each do |a|
       u = a['href']

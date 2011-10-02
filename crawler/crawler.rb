@@ -15,7 +15,7 @@ email_regex2 = /([\w+\-.]+) \[ at \] ([a-z\d\-.]+\.[a-z]+)/i
 server_url = 'http://127.0.0.1:4567'
 response = RestClient.get server_url + '/start'
 params = JSON.parse(response)
-domain = params["domain"]
+domain = params["domain"]['url']
 arr_mails = Set.new
 out_links = Array.new
 links = Set.new
@@ -51,13 +51,13 @@ end
 
 puts "Links: #{links.to_a}"
 puts "Emails found in #{domain}"
+p arr_mails.to_a
 
 RestClient.post server_url + '/email', 
-  { 'emails' => arr_mails.to_a }.to_json, :content_type => :json, :accept => :json
+  { 'emails' => arr_mails.to_a, 'domain' => domain }.to_json, :content_type => :json, :accept => :json
 
-RestClient.post server_url + '/links', 
-  { 'links' => links_to_a }.to_json, content_type: :json, accept: :json
+RestClient.post server_url + '/link', 
+  { 'url' => links.to_a }.to_json, content_type: :json, accept: :json
 
-p arr_mails.to_a
 
 

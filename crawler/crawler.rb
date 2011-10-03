@@ -34,13 +34,11 @@ links = Set.new
 Anemone.crawl(domain) do |anemone|
 
   anemone.focus_crawl do |page|
-    domain_links = page.links.select do |x|
+    page.links.select do |x|
       x.to_s.downcase.include? domain.downcase
     end
-    out_links = out_links + page.links - domain_links
-    domain_links
   end
-
+  
   anemone.user_agent = "ChgCrawler"
   anemone.on_every_page do |page|
     puts page.url

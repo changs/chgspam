@@ -26,6 +26,10 @@ email_regex2 = /([\w+\-.]+) \[ at \] ([a-z\d\-.]+\.[a-z]+)/i
 server_url = 'http://127.0.0.1:4567'
 response = RestClient.get server_url + '/start'
 params = JSON.parse(response)
+if params["domain"].nil?
+  puts "Nothing to do"
+  exit
+end
 domain = params["domain"]['url']
 arr_mails = Set.new
 out_links = Array.new

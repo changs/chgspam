@@ -16,6 +16,10 @@ def meta_refresh?(page)
   url = redirect_url['content'][/url=(.+)/, 1] unless redirect_url.nil?
 end
 
+def send_to_server(server_url, params)
+  RestClient.post server_url,params.to_json, :content_type => :json, :accept => :json
+end
+
 email_regex = /[\w+\-.]+@[a-z\d\-.]+\.[a-z]+/i
 email_regex2 = /([\w+\-.]+) \[ at \] ([a-z\d\-.]+\.[a-z]+)/i
 
@@ -66,12 +70,6 @@ puts "Links: #{links.to_a}"
 puts "Emails found in #{domain}"
 p arr_mails.to_a
 
-begin
-  RestClient.post server_url + '/email', 
-    { 'emails' => arr_mails.to_a, 'domain' => domain }.to_json, :content_type => :json, :accept => :json
-
-  RestClient.post server_url + '/link', 
-    { 'url' => links.to_a }.to_json, content_type: :json, accept: :json
-
-end
+send_to_server(server_url + '/email', { 'emails' => arr_mails.to_a, 'domain' => domain })
+send_to_server(server_url + '/link',  { 'url' => links.to_a })
 

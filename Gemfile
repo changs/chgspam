@@ -1,6 +1,6 @@
 source "http://rubygems.org"
 
-gem 'rack', '1.3.3'
+gem 'rack', '1.3.4'
 gem "anemone"
 gem "nokogiri"
 gem "sinatra"

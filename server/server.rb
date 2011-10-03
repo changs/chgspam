@@ -32,8 +32,10 @@ get '/' do
 end
 
 get '/start' do
-  failed = Domain.all(visited: false, :visited_at.lt => (Time.now-600)) # Wait for 10 minutes for crawlers to return
+  # Wait for 10 minutes for crawlers to return
+  failed = Domain.all(visited: nil, :visited_at.lt => (Time.now-600))
   failed.each { |x| x.update(visited_at: nil) }
+
   content_type :json
   if domain = Domain.first(visited_at: nil)
   else  # If nothing lefts return the oldest domain to crawl
@@ -79,5 +81,5 @@ __END__
 
 @@ items
 %h2== #{@items.count} gathered.
-  - @items.each do |i|
+- @items.each do |i|
   %p= i['url']

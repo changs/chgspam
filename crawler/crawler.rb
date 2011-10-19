@@ -25,19 +25,26 @@ email_regex2 = /([\w+\-.]+) \[ at \] ([a-z\d\-.]+\.[a-z]+)/i
 
 server_url = ARGV[0]
 puts "Connecting to #{ARGV[0]}"
-response = RestClient.get server_url + '/start'
-params = JSON.parse(response)
-if params["domain"].nil?
-  puts "Nothing to do"
+
+begin 
+  response = RestClient.get server_url + '/start'
+rescue => e
+  puts e
   exit
 end
+
+params = JSON.parse(response)
+if params["domain"].nil?
+  puts "Nothing to do."
+  exit
+end
+
 domain = params["domain"]['url']
 arr_mails = Set.new
 out_links = Array.new
 links = Set.new
 
 Anemone.crawl(domain) do |anemone|
-
   anemone.focus_crawl do |page|
     page.links.select do |x|
       x.to_s.downcase.include? domain.downcase

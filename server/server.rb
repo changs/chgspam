@@ -24,11 +24,11 @@ configure do
   Email.auto_migrate! unless Email.storage_exists?
   Domain.auto_migrate! unless Domain.storage_exists?
   # First domain to crawl
-  #Domain.create(url: "http://127.0.0.1:4567", visited: false, visited_at: Time.now-6000)
+  Domain.create(url: "http://192.168.56.1:4567", visited: false, visited_at: Time.now-6000)
 end
 
 get '/' do
-  #'Hello world! <a href="/test">Link</a> <a href="http://www.put.poznan.pl">Polibuda</a>'
+  'Hello world! <a href="/test">Link</a> <a href="http://www.put.poznan.pl">Polibuda</a>'
 end
 
 get '/start' do

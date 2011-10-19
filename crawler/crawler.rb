@@ -69,10 +69,9 @@ Anemone.crawl(domain) do |anemone|
     end
 
     mails = page.body.scan(email_regex)
-    mails.each { |mail| arr_mails.add(mail) }
+    mails.each { |mail| arr_mails.add(mail); puts mail }
     mails = page.body.scan(email_regex2)  # $1 is a content before @, $2 after.
-    mails.each { |mail| arr_mails.add($1 + '@' + $2) }
-
+    mails.each { |mail| arr_mails.add(mail[0] + '@' + mail[1]) }
   end
 end
 

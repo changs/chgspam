@@ -46,7 +46,6 @@ end
 
 domain = params["domain"]['url']
 arr_mails = Set.new
-out_links = Array.new
 links = Set.new
 
 puts "Crawling on #{domain}"

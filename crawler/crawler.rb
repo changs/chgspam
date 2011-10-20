@@ -23,9 +23,14 @@ end
 email_regex = /[\w+\-.]+@[a-z\d\-.]+\.[a-z]+/i
 email_regex2 = /([\w+\-.]+) \[ at \] ([a-z\d\-.]+\.[a-z]+)/i
 
-server_url = ARGV[0]
-puts "Connecting to #{ARGV[0]}"
+if (ARGV[0].nil?) 
+  puts "Usage: crawler.rb [server_url]"
+  exit
+end
 
+server_url = ARGV[0]
+puts "Connecting to #{server_url}."
+exit
 begin 
   response = RestClient.get server_url + '/start'
 rescue => e

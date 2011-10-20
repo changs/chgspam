@@ -30,7 +30,7 @@ end
 
 server_url = ARGV[0]
 puts "Connecting to #{server_url}."
-exit
+
 begin 
   response = RestClient.get server_url + '/start'
 rescue => e

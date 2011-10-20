@@ -24,7 +24,7 @@ configure do
   Email.auto_migrate! unless Email.storage_exists?
   Domain.auto_migrate! unless Domain.storage_exists?
   # First domain to crawl
-  Domain.create(url: "http://192.168.56.1:4567", visited: false, visited_at: Time.now-6000)
+  Domain.create(url: "http://192.168.56.1:4567")
 end
 
 get '/' do
@@ -38,7 +38,7 @@ get '/start' do
 
   content_type :json
   if domain = Domain.first(visited_at: nil)
-  else  # If nothing lefts return the oldest domain to crawl
+  else  # If nothing left return the oldest domain to crawl
     domain = Domain.first(visited_at: Domain.min(:visited_at))
   end
   domain.update(visited_at: Time.now) unless domain.nil?
@@ -82,4 +82,5 @@ __END__
 @@ items
 %h2== #{@items.count} gathered.
 - @items.each do |i|
-  %p= i['url']
+  %ul
+  %li= i['url']

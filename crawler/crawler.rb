@@ -44,6 +44,8 @@ arr_mails = Set.new
 out_links = Array.new
 links = Set.new
 
+puts "Crawling on #{domain}"
+
 Anemone.crawl(domain) do |anemone|
   anemone.focus_crawl do |page|
     page.links.select do |x|
@@ -53,7 +55,7 @@ Anemone.crawl(domain) do |anemone|
   
   anemone.user_agent = "ChgCrawler"
   anemone.on_every_page do |page|
-    puts page.url
+    print "." #page.url
 
     next unless page.html?
     if meta_refresh?(page)
@@ -69,7 +71,7 @@ Anemone.crawl(domain) do |anemone|
     end
 
     mails = page.body.scan(email_regex)
-    mails.each { |mail| arr_mails.add(mail); puts mail }
+    mails.each { |mail| arr_mails.add(mail) }
     mails = page.body.scan(email_regex2)  # $1 is a content before @, $2 after.
     mails.each { |mail| arr_mails.add(mail[0] + '@' + mail[1]) }
   end

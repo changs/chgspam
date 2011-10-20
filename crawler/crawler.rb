@@ -17,7 +17,7 @@ def meta_refresh?(page)
 end
 
 def send_to_server(server_url, params)
-  RestClient.post server_url,params.to_json, :content_type => :json, :accept => :json
+  RestClient.post server_url, params.to_json, :content_type => :json, :accept => :json
 end
 
 email_regex = /[\w+\-.]+@[a-z\d\-.]+\.[a-z]+/i
@@ -51,6 +51,7 @@ links = Set.new
 puts "Crawling on #{domain}"
 
 Anemone.crawl(domain) do |anemone|
+  anemone.storage = Anemone::Storage.MongoDB
   anemone.focus_crawl do |page|
     page.links.select do |x|
       x.to_s.downcase.include? domain.downcase
@@ -81,9 +82,9 @@ Anemone.crawl(domain) do |anemone|
   end
 end
 
-puts "Links: #{links.to_a}"
-puts "Emails found in #{domain}"
-p arr_mails.to_a
+#puts "Links: #{links.to_a}"
+#puts "Emails found in #{domain}"
+#p arr_mails.to_a
 
 send_to_server(server_url + '/email', { 'emails' => arr_mails.to_a, 'domain' => domain })
 send_to_server(server_url + '/link',  { 'url' => links.to_a })

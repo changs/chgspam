@@ -10,3 +10,5 @@ gem 'dm-sqlite-adapter' , "1.1.0"
 gem 'haml'
 gem 'json', "~> 1.4.6"
 gem 'thin'
+gem 'mongodb'
+gem 'bson_ext'

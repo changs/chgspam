@@ -30,7 +30,7 @@ end
 
 server_url = ARGV[0]
 puts "Connecting to #{server_url}."
-
+while true
 begin 
   response = RestClient.get server_url + '/start'
 rescue => e
@@ -82,10 +82,12 @@ Anemone.crawl(domain) do |anemone|
   end
 end
 
-#puts "Links: #{links.to_a}"
-#puts "Emails found in #{domain}"
-#p arr_mails.to_a
+puts
+puts "Found #{links.length} links."
+puts "Found #{arr_mails.length} emails."
 
 send_to_server(server_url + '/email', { 'emails' => arr_mails.to_a, 'domain' => domain })
 send_to_server(server_url + '/link',  { 'url' => links.to_a })
-
+puts "Sleep for a while" 
+sleep 5
+end

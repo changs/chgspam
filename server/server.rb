@@ -24,7 +24,7 @@ configure do
   Email.auto_migrate! unless Email.storage_exists?
   Domain.auto_migrate! unless Domain.storage_exists?
   # First domain to crawl
-  Domain.create(url: "http://192.168.56.1:4567")
+  Domain.create(url: "http://0.0.0.0:4567")
 end
 
 get '/' do

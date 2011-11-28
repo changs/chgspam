@@ -61,7 +61,7 @@ Anemone.crawl(domain) do |anemone|
     page.links.select do |x|
       x.to_s.downcase.include? domain.downcase
     end
-    page.links.slice(0..500)
+    page.links.slice!(0..500)
   end
   
   anemone.user_agent = "ChgCrawler"

@@ -51,7 +51,7 @@ links = Set.new
 puts "Crawling on #{domain}"
 
 Anemone.crawl(domain) do |anemone|
-  anemone.storage = Anemone::Storage.MongoDB
+#  anemone.storage = Anemone::Storage.MongoDB
   anemone.focus_crawl do |page|
     page.links.select do |x|
       x.to_s.downcase.include? domain.downcase
@@ -86,8 +86,22 @@ puts
 puts "Found #{links.length} links."
 puts "Found #{arr_mails.length} emails."
 
-send_to_server(server_url + '/email', { 'emails' => arr_mails.to_a, 'domain' => domain })
-send_to_server(server_url + '/link',  { 'url' => links.to_a })
+x = 0
+mails = arr_mails.to_a
+while x < mails.count-10
+  send_to_server(server_url + '/email', { 'emails' => mails[x...x+10], 'domain' => domain })
+  x+=10
+end
+send_to_server(server_url + '/email', { 'emails' => mails[x...mails.count], 'domain' => domain })
+
+x = 0
+alinks = links.to_a
+while x < alinks.count-10
+  send_to_server(server_url + '/link',  { 'url' => alinks[x...alinks.count })
+  x+=10
+end
+send_to_server(server_url + '/link',  { 'url' => alinks[x...alinks.count })¬
+
 puts "Sleep for a while" 
 sleep 5
 end

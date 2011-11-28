@@ -9,6 +9,11 @@ require 'rest_client'
 require 'json'
 require 'set'
 
+trap("SIGINT") do
+  puts "Shuting down"
+  exit! 
+end
+
 def meta_refresh?(page)
   if redirect_url = page.doc.at('meta[http-equiv="Refresh"]')
   else redirect_url = page.doc.at('meta[http-equiv="refresh"]')

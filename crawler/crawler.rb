@@ -97,10 +97,10 @@ send_to_server(server_url + '/email', { 'emails' => mails[x...mails.count], 'dom
 x = 0
 alinks = links.to_a
 while x < alinks.count-10
-  send_to_server(server_url + '/link',  { 'url' => alinks[x...alinks.count })
+  send_to_server(server_url + '/link',  { 'url' => alinks[x...alinks.count ])
   x+=10
 end
-send_to_server(server_url + '/link',  { 'url' => alinks[x...alinks.count })¬
+send_to_server(server_url + '/link',  { 'url' => alinks[x...alinks.count])¬
 
 puts "Sleep for a while" 
 sleep 5

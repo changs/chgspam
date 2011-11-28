@@ -24,15 +24,15 @@ configure do
   Email.auto_migrate! unless Email.storage_exists?
   Domain.auto_migrate! unless Domain.storage_exists?
   # First domain to crawl
-  Domain.create(url: "http://0.0.0.0:4567")
 end
 
 get '/' do
-  'Hello world! <a href="/test">Link</a> <a href="http://www.put.poznan.pl">Polibuda</a>'
+  'Hello world! <a href="/test">Link</a> <a href="http://www.put.poznan.pl">Politechnika Poznanska</a> <a href="http://amu.edu.pl/">UAM</a>'
 end
 
 get '/start' do
   # Wait for 10 minutes for crawlers to return
+  Domain.first_or_create(url: ("http://" + request.host_with_port))
   failed = Domain.all(visited: nil, :visited_at.lt => (Time.now-600))
   failed.each { |x| x.update(visited_at: nil) }
 

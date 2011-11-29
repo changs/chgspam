@@ -77,7 +77,7 @@ __END__
 
 @@ layout
 %html
-%body= yield
+  %body= yield
 
 @@ items
 %h2== #{@items.count} gathered.

@@ -83,4 +83,4 @@ __END__
 %h2== #{@items.count} gathered.
 - @items.each do |i|
   %ul
-  %li= i['url']
+    %li= i['url']

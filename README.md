@@ -129,5 +129,5 @@ Hasło użytkownika: b
 
 Hasło superużytkownika: a
 
-Pliki projektu znajduą się w katalogu /home/user/chgspam
+Pliki projektu znajdują się w katalogu /home/user/chgspam
 

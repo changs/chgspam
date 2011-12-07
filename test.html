@@ -1,0 +1,148 @@
+<html>
+  <head>
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+  </head>
+  <body>
+<h1>Chgspam</h1>
+
+<h2>Bartosz Pranczke</h2>
+
+<h3>Opis</h3>
+
+<p>Chgspam jest to pakiet zawierający serwer oraz klient mający na celu gromadzenie
+adresów e-mail poprzez odwiedzanie stron internetowych. Klient oprócz zbierania 
+adresów e-mail gromadzi także kolejny domeny do sprawdzenia.</p>
+
+<h3>Architektura</h3>
+
+<pre>
+                             +-----------+
+                             |  Klient   |
+                             +-----------+
+                                 ^ +
+                                 | |
+                                 + v
+       +------------+ &lt;----+ +-----------+ +----&gt; +-----------+
+       |  Klient    |        |  Server   |        |  Klient   |
+       +------------+ +----&gt; +-----------+ &lt;----+ +-----------+
+                                 + ^
+                                 | |
+                                 v +
+                             +-----------+
+                             |  Klient   |
+                             +-----------+</pre>
+
+<h3>Opis działania</h3>
+
+<pre>
+
+   +-----------------------+                                             +------------------------+
+   |      SERVER           |                                             |      KLIENT            |
+   |-----------------------|                                             |------------------------|
+   |                       |      GET /start                             |                        |
+   | Serwer sprawdza w     &lt;---------------------------------------------+ Wysłanie zapytania o   |
+   | bazie ktore domeny    |                                             | URL do przeskanowania  |
+   | sa jeszcze nie        |                                             |                        |
+   | przeskanowane i       |     RETURN url                              |                        |
+   | odsyłą pierwszą zna-  +---------------------------------------------&gt;                        |
+   | lezioną               |                                             |                        |
+   |                       |                               +-------------+ Klient przeszukuje po- |
+   |                       |                               |             | dany URL i zapisuje    |
+   |                       |                               |             | wszystkie znalezione   |
+   |                       |                               |             | adresy e-mail oraz     |
+   |                       |                               +-------------&gt; linki wychodzące       |
+   |                       |                                             |                        |
+   |                       |      POST /link                             |                        |
+   |                       &lt;---------------------------------------------+ Wysyłane są zapytania  |
+   |                       |                                             | POST zawierające po 10 |
+   |                       |                                             | znalezionych linków    |
+   |                       |      POST /email                            |                        |
+   |                       &lt;---------------------------------------------+ Wysyłane są zapytania  |
+   |                       |                                             | POST zawierające po 10 |
+   |                       |                                             | znalezionych adresów   |
+   |                       |                                             | e-mail.                |
+   +-----------------------+                                             +------------------------+</pre>
+
+<h3>Uruchamianie</h3>
+
+<p>Program serwera uruchamiamy następująco:</p>
+
+<pre><code>~/chgspam$ bundle exec ruby server/server.rb # Bedac w katalogu głównym aplikacji
+</code></pre>
+
+<p>Program kliencki należy uruchomić podając jako argument URI serwera wraz z portem.</p>
+
+<pre><code>~/chgspam$ bundle exec ruby crawler/crawler.rb url_servera  # Będąc w katalogu głównym aplikacji
+</code></pre>
+
+<h3>Wynik działania</h3>
+
+<p>Serwer udostępnia pozyskane adresy e-mail oraz domeny pod adresami</p>
+
+<pre><code>http://url_servera:4567/email
+htto://url_servera:4567/link
+</code></pre>
+
+<p>Przykładowy wynik programu przy czasie działania 10 minut: </p>
+
+<pre><code>$ curl http://0.0.0.0:4567/email -s | head -n20 
+&lt;html&gt;
+&lt;body&gt;
+&lt;h2&gt;429 gathered.&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;bartosz@pranczke.com&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+  &lt;li&gt;ala@wp.pl&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+  &lt;li&gt;fdsfsd@das.com&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+  &lt;li&gt;Sekretariat.Rektora@put.poznan.pl&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+  &lt;li&gt;Sekretariat.Prorektorow@put.poznan.pl&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+  &lt;li&gt;Sekretariat.Kanclerza@put.poznan.pl&lt;/li&gt;
+</code></pre>
+
+<h3>Protokoły</h3>
+
+<p>Serwer jest oparty o architekturę RESTfull i komunikuję się z klientem za pomocą HTTP.
+Dane przesyłane są między klientem a serwerem w za pomocą formatu JSON. </p>
+
+<p>Przykładowo wysłanie zapytania GET /start do serwera zwraca:</p>
+
+<pre><code>$ curl http://0.0.0.0:4567/start -s             
+{"domain":{"id":8,"url":"http://www.et.put.poznan.pl/","visited":null,"visited_at":"2011-11-29T01:23:29+01:00"}}%
+</code></pre>
+
+<p>Pola visited oraz visited_at zostaną omówionę w punkcjie "Obsługa błędów"</p>
+
+<h3>Obsługa błędów</h3>
+
+<p>Każda domena do sprawdzenia lub sprawdzona w bazie jest dodatkowo opisana dwoma polami:
+  - visited
+  - visited<em>at
+Pole visited</em>at zostaje wypełnione w momencie wysłania URL do klienta. Natomiast pole visited oznacza, 
+że sprawdzenie przebiegło pomyślne i jest ustawione w momencie, gdy klient zwraca rezultat poszukiwań
+do serwera. Serwer czeka 10 minut na rezultaty od klienta, po czym uznaje, że klient zawiódł
+i deleguje URL do póli do sprawdzenia.</p>
+
+<h3>Maszyny wirtualne</h3>
+
+<p>Do projektu dołączona jest maszyna wirtualna z zainstalowanym klientem oraz serwerem. 
+Maszyny można sklonować dowolną ilość razy. Każda maszyna może pełnić funkcję serwera
+lub klienta.</p>
+
+<p>Login uzytkownika: user</p>
+
+<p>Hasło użytkownika: b</p>
+
+<p>Hasło superużytkownika: a</p>
+
+<p>Pliki projektu znajduą się w katalogu /home/user/chgspam</p>
+</body>
+</html>

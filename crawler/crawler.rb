@@ -55,19 +55,18 @@ links = Set.new
 
 puts "Crawling on #{domain}"
 
-Anemone.crawl(domain) do |anemone|
+Anemone.crawl(domain, opts = {:depth_limit => 3, :redirect_limit => 3}) do |anemone|
 #  anemone.storage = Anemone::Storage.MongoDB
   anemone.focus_crawl do |page|
     page.links.select do |x|
       x.to_s.downcase.include? domain.downcase
     end
-    page.links.slice!(0..500)
+    page.links.slice!(0..30)
   end
   
   anemone.user_agent = "ChgCrawler"
   anemone.on_every_page do |page|
     print "." #page.url
-
     next unless page.html?
     if meta_refresh?(page)
       links << meta_refresh?(page)
